@@ -62,6 +62,56 @@
             break-inside: avoid;
             margin-bottom: 1.5rem;
         }
+
+        /* 新增编辑样式 */
+        .article-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            border-radius: 10px;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        .edit-mode {
+            border: 2px dashed #3498db;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .edit-tools {
+            text-align: right;
+            margin-top: 1rem;
+        }
+        .edit-textarea {
+            width: 100%;
+            height: 300px;
+            padding: 10px;
+            font-family: '微软雅黑', sans-serif;
+        }
+        .read-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -120,7 +170,8 @@
                 <div class="article-list">
                     <div class="article-item">
                         <h3>《xx小学的环境、制度、学生精神· 制度🤮🤢》</h3>
-                        <p>作者：消炎药|字数：--|状态：更新中（3.3发布）<br>消炎药的批判性文学代表作，深刻揭露校领导的**</p>
+                        <p>作者：消炎药|字数：--|状态：更新中（线上发布）<br>消炎药的批判性文学代表作，深刻揭露校领导的**</p>
+                        <button class="read-button" onclick="showArticle('article1')">🚀 阅读发癫文章</button>
                     </div>
                     <div class="article-item">
                         <h3>《404教室一命速通🤯》</h3>
@@ -147,7 +198,88 @@
         </div>
     </div>
 
+    <!-- 新增模态框 -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="article-modal" id="articleModal">
+        <h2 id="articleTitle"></h2>
+        <div id="articleContent"></div>
+        <div class="edit-tools">
+            <button onclick="toggleEdit()" style="background:#2ecc71">📝 发癫修改</button>
+            <button onclick="closeModal()" style="background:#e74c3c">❌ 关闭</button>
+        </div>
+    </div>
     <script>
+        // 原有内容切换功能
+        function showContent(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // 新增文章编辑功能
+        const articles = {
+            article1: {
+                title: '《xx小学的环境、制度、学生精神・制度🤮🤢》',
+                content: localStorage.getItem('article1') || `消炎药的批判性文学代表作<br><br>
+                    👉 校规第666条：<br>
+                    <span style="color:red">• 禁止在食堂吃到正常分量的肉<br>
+                    • 必须每天夸赞校长发型</span><br><br>
+                    📌 最新更新：发现食堂阿姨已习得量子手抖术！`
+            }
+        };
+        let currentArticleId = '';
+
+        function showArticle(articleId) {
+            currentArticleId = articleId;
+            const article = articles[articleId];
+            document.getElementById('articleTitle').innerHTML = article.title;
+            document.getElementById('articleContent').innerHTML = article.content;
+            document.getElementById('modalOverlay').style.display = 'block';
+            document.getElementById('articleModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.getElementById('articleModal').style.display = 'none';
+        }
+
+        function toggleEdit() {
+            const contentDiv = document.getElementById('articleContent');
+            const isEditing = contentDiv.classList.toggle('edit-mode');
+            
+            if(isEditing) {
+                const currentContent = contentDiv.innerHTML.replace(/<br>/g, '\n');
+                contentDiv.innerHTML = `
+                    <textarea class="edit-textarea" id="editContent">${currentContent}</textarea>
+                    <div style="text-align:right; margin-top:10px">
+                        <button onclick="saveChanges()" 
+                                style="background:#27ae60;color:white">
+                            💾 保存癫文
+                        </button>
+                        <button onclick="toggleEdit()" 
+                                style="background:#95a5a6">
+                            ↩️ 取消
+                        </button>
+                    </div>
+                `;
+            } else {
+                contentDiv.innerHTML = articles[currentArticleId].content;
+            }
+        }
+
+        function saveChanges() {
+            const newContent = document.getElementById('editContent').value;
+            articles[currentArticleId].content = newContent.replace(/\n/g, '<br>');
+            localStorage.setItem(currentArticleId, articles[currentArticleId].content);
+            toggleEdit();
+        }
+
+        document.getElementById('modalOverlay').onclick = closeModal;
         function showContent(sectionId) {
             // 隐藏所有内容区域
             document.querySelectorAll('.content-section').forEach(section => {
