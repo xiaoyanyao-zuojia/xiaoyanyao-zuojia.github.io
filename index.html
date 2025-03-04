@@ -5,6 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>作家协会</title>
     <style>
+        /* 新增滚动条样式 */
+        .article-content {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 10px;
+            margin: 15px 0;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+        
+        /* 自定义滚动条 */
+        .article-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .article-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .article-content::-webkit-scrollbar-thumb {
+            background: #3498db;
+            border-radius: 4px;
+        }
+        .article-content::-webkit-scrollbar-thumb:hover {
+            background: #2980b9;
+        }
+
+        /* 调整模态框高度 */
+        .article-modal {
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+    <!-- 保持原有导航和容器结构不变 -->
+
+    <!-- 修改模态框结构 -->
+    <div class="article-modal" id="articleModal">
+        <h2 id="articleTitle"></h2>
+        <div class="article-content" id="articleContent"></div> <!-- 新增滚动容器 -->
+        <div class="edit-tools">
+            <button onclick="toggleEdit()">📝 发癫修改</button>
+            <button onclick="closeModal()">❌ 关闭</button>
+        </div>
+    </div>
+
+    <script>
+        // 修改保存函数适配滚动条
+        function saveChanges() {
+            const newContent = document.getElementById('editContent').value;
+            articles.article1.content = newContent.replace(/\n/g, '<br>');
+            localStorage.setItem('article1', articles.article1.content);
+            
+            // 自动滚动到底部
+            const contentDiv = document.getElementById('articleContent');
+            contentDiv.scrollTop = contentDiv.scrollHeight;
+            
+            toggleEdit();
+        }
+
+        // 保持其他JavaScript不变
         /* 原有样式保持不变 */
         body {
             font-family: '微软雅黑', sans-serif;
