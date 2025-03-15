@@ -5,8 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>作家协会</title>
     <style>
-        
-        /* 新增文章板块样式 */
+        body {
+            font-family: '微软雅黑', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        nav {
+            background-color: #2c3e50;
+            padding: 1rem;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+            padding: 5px 10px;
+            transition: all 0.3s;
+        }
+        nav a:hover {
+            background-color: #34495e;
+        }
+        .active {
+            border-bottom: 2px solid #3498db;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: white;
+            min-height: 400px;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
         .article-list {
             columns: 2;
             margin-top: 1rem;
@@ -15,8 +60,6 @@
             break-inside: avoid;
             margin-bottom: 1.5rem;
         }
-
-        /* 新增编辑样式 */
         .article-modal {
             display: none;
             position: fixed;
@@ -75,7 +118,6 @@
     </nav>
 
     <div class="container">
-        <!-- 首页内容 -->
         <div id="home" class="content-section active">
             <h1>欢迎来到作(zuō)家协会！😊</h1>
             <p>xx小学作家协会是消炎药领导的，由一群沈瑾自发组织而成的抽象文学协会，创立于2024年12月。</p>
@@ -88,7 +130,6 @@
             </ul>
         </div>
 
-        <!-- 关于我们内容 -->
         <div id="about" class="content-section">
             <h1>关于我们</h1>
             <h2>协会简介</h2>
@@ -114,10 +155,8 @@
             <p>欢迎符合条件的文学创作者加入协会，申请者需满足以下条件：1.够颠2.嘴够严3.会写文章，知道如何讽刺批判(人太多了不好）</p>
         </div>
 
-        <!-- 新增文章和其他内容 -->
         <div id="articles" class="content-section">
             <h1>📚 文章和其他</h1>
-            
             <div class="subsection">
                 <h2>发颠文学的部分作品🥳</h2>
                 <div class="article-list">
@@ -151,7 +190,6 @@
         </div>
     </div>
 
-    <!-- 新增模态框 -->
     <div class="modal-overlay" id="modalOverlay"></div>
     <div class="article-modal" id="articleModal">
         <h2 id="articleTitle"></h2>
@@ -159,34 +197,77 @@
         <div class="edit-tools">
             <button onclick="toggleEdit()" style="background:#2ecc71">📝 发癫修改</button>
             <button onclick="closeModal()" style="background:#e74c3c">❌ 关闭</button>
+        </div>
+    </div>
+
     <script>
-        // 原有内容切换功能
+        // 内容切换功能
         function showContent(sectionId) {
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.remove('active');
             });
             document.getElementById(sectionId).classList.add('active');
+            
             document.querySelectorAll('nav a').forEach(link => {
                 link.classList.remove('active');
             });
             event.target.classList.add('active');
         }
 
-        
-            // 隐藏所有内容区域
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
+        // 文章编辑功能
+        const articles = {
+            article1: {
+                title: '《xx小学的环境、制度、学生精神・制度🤮🤢》',
+                content: localStorage.getItem('article1') || `消炎药的批判性文学代表作...（初始内容）`
+            }
+        };
 
-            // 显示选定内容区域
-            document.getElementById(sectionId).classList.add('active');
+        let currentArticleId = '';
 
-            // 更新导航链接样式
-            document.querySelectorAll('nav a').forEach(link => {
-                link.classList.remove('active');
-            });
-            event.target.classList.add('active');
+        function showArticle(articleId) {
+            currentArticleId = articleId;
+            const article = articles[articleId];
+            document.getElementById('articleTitle').innerHTML = article.title;
+            document.getElementById('articleContent').innerHTML = article.content;
+            document.getElementById('modalOverlay').style.display = 'block';
+            document.getElementById('articleModal').style.display = 'block';
         }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.getElementById('articleModal').style.display = 'none';
+        }
+
+        function toggleEdit() {
+            const contentDiv = document.getElementById('articleContent');
+            const isEditing = contentDiv.classList.toggle('edit-mode');
+            
+            if(isEditing) {
+                const currentContent = contentDiv.innerHTML.replace(/<br>/g, '\n');
+                contentDiv.innerHTML = `
+                    <textarea class="edit-textarea" id="editContent">${currentContent}</textarea>
+                    <div style="text-align:right; margin-top:10px">
+                        <button onclick="saveChanges()" style="background:#27ae60;color:white">
+                            💾 保存癫文
+                        </button>
+                        <button onclick="toggleEdit()" style="background:#95a5a6">
+                            ↩️ 取消
+                        </button>
+                    </div>
+                `;
+            } else {
+                contentDiv.innerHTML = articles[currentArticleId].content;
+            }
+        }
+
+        function saveChanges() {
+            const newContent = document.getElementById('editContent').value;
+            articles[currentArticleId].content = newContent.replace(/\n/g, '<br>');
+            localStorage.setItem(currentArticleId, articles[currentArticleId].content);
+            toggleEdit();
+        }
+
+        document.getElementById('modalOverlay').onclick = closeModal;
     </script>
 </body>
 </html>
