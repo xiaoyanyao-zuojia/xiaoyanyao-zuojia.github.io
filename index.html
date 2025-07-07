@@ -284,6 +284,56 @@
             'anmianyao':{
                 name:'安眠药',
                 title: '首席催眠师',
+                specialty: '发疯文学',
+                level: '99',
+                quote: '',
+                works: '《论语文书》',
+                status: '持续发癫中',
+                desc: '协会元老之一，擅长在字里行间注入催眠魔力，读者常常在阅读中途突然昏睡。拥有将复杂问题简单睡着的特殊能力。'
+            }
+        };
+
+        function showMenberInfo(menberId) {
+            const menber = members[memberId];
+            if (!member) return;
+
+            const detailsHtml = `
+                <div class="member-header">
+                    <div class="member-avatar">${member.name.charAt(0)}</div>
+                    <div>
+                        <h2 class="member-name">${member.name}</h2>
+                        <div class="member-title">${member.title} | ${member.level}</div>
+                    </div>
+                </div>
+                
+                <div class="member-info">
+                    <div><span class="info-label">代表作：</span><span class="info-value">${member.works}</span></div>
+                    <div><span class="info-label">状态：</span><span class="info-value">${member.status}</span></div>
+                    <div><span class="info-label">专长：</span><span class="info-value">${member.specialty}</span></div>
+                </div>
+                
+                <div class="member-quote">"${member.quote}"</div>
+                
+                <div class="member-info">
+                    <span class="info-label">人物简介：</span>
+                    <p>${member.desc}</p>
+                </div>
+            `;
+            
+            document.getElementById('memberDetails').innerHTML = detailsHtml;
+            document.getElementById('modalOverlay').style.display = 'block';
+            document.getElementById('memberModal').style.display = 'block';
+        }
+
+        function closeMemberModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.getElementById('memberModal').style.display = 'none';
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+        });
     </script>
 </body>
 </html>
