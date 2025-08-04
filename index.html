@@ -130,7 +130,7 @@
                 <li>每天笑四一个读者</li>
                 <li>贯彻疯疯颠颠、每天按时发（神经）病的方针</li>
                 <li>发扬神金精神</li>
-            <h2>本疗程话题：洒哈喇之夜干点啥逆天事呢🤔</h2>
+            <h2>本疗程话题：没想好</h2>
             </ul>
         </div>
 
@@ -171,8 +171,8 @@
                         <button class="read-button" onclick="showArticle('article1')">🚀 阅读发癫文章</button>
                     </div>
                     <div class="article-item">
-                        <h3>《论各科作业》</h3>
-                        <p>作者：粽子|字数：550|状态：写完了<br>发疯文学，粽新力</p>
+                        <h3>《学校异闻录》</h3>
+                        <p>作者：降压药|字数：114514|状态：更新中<br>降压药旗下潜力股，引人入胜的中篇小说</p>
                         <h3>《论语文书📙》</h3>
                         <p>作者：安眠药|字数：--|状态：更新中<br>发疯文学，安眠药远古疯癫力作🙃</p>
                         <h3>《班里部分女生👧的罪行》</h3>
@@ -181,7 +181,7 @@
                         <p>作者：消炎药|字数：300|状态：百度翻译抽风了<br>受到〈女生罪行〉影响，写出的损YJX的文章的文言版本，镇会之宝之二（虽然因为*度翻译抽风写不完）</p>
                         <h3>《论26 zqy》</h3>
                         <p>|字数：400|状态：更完了<br>《论璇》衍生作品，消炎药远古损人文章🤗</p>
-                        <h3>会长目前还在写一篇自己的文章（但是现在你们不能看</h3>
+                        <h3>距离作协1周年还有</h3>
                         
                     </div>
                 </div>
@@ -193,7 +193,7 @@
                     <li>🧠 销舲鱽超绝肌肉线条.jpg</li>
                     <li>💥同学群</li>
                     <li>🤪 啊？</li>
-                    <li>📅 下次病友会：7月11号如何？</li>
+                    <li>📅 下次病友会：瑶瑶无期</li>
                     <li>❗毕业后zuō协文章等遗产如何分配？❗</li>
                 </ul>
             </div>
@@ -228,7 +228,7 @@
         const articles = {
             article1: {
                 title: '《xx小学的环境、制度、学生精神・制度🤮🤢》',
-                content: localStorage.getItem('article1') || `校长太帅啦！！！！`
+                content: localStorage.getItem('article1') || `100010101010`
             }
         };
 
@@ -279,6 +279,55 @@
 
         document.getElementById('modalOverlay').onclick = closeModal;
 
+         // 周年倒计时功能
+        function updateCountdown() {
+            // 设置目标日期 (2025年12月17日)
+            const targetDate = new Date('2025-12-17T00:00:00');
+            
+            // 设置成立日期 (2024年12月17日)
+            const startDate = new Date('2024-12-17T00:00:00');
+            
+            // 获取当前时间
+            const now = new Date();
+            
+            // 更新当前时间显示
+            document.getElementById('current-time').textContent = 
+                `当前时间: ${now.toLocaleString('zh-CN', { 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                })}`;
+            
+            // 计算剩余天数
+            const timeDiff = targetDate - now;
+            const days = Math.max(0, Math.floor(timeDiff / (1000 * 60 * 60 * 24)));
+            
+            // 更新天数显示
+            document.getElementById('days-count').textContent = days;
+            
+            // 计算周年倒计时进度
+            const totalDuration = targetDate - startDate;
+            const elapsed = now - startDate;
+            let progress = (elapsed / totalDuration) * 100;
+            
+            // 确保进度在0-100%之间
+            progress = Math.max(0, Math.min(100, progress));
+            
+            // 更新进度条和文本
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-text').textContent = 
+                `周年倒计时进度: ${progress.toFixed(2)}%`;
+        }
+        
+        // 页面加载时立即更新一次
+        updateCountdown();
+        
+        // 每秒更新一次倒计时
+        setInterval(updateCountdown, 1000);
+        
         //会员信息功能
         const members = {
             'anmianyao':{
@@ -397,3 +446,4 @@
     </script>
 </body>
 </html>
+
