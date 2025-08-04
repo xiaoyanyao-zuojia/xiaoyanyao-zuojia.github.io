@@ -2,12 +2,13 @@
 <html lang="zh-CN">
 <head>
     <!-- 增强版（适配更多设备） -->
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon.ico.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>zuō家协会</title>
     <style>
+        /* 原有样式保持不变 */
         body {
             font-family: '微软雅黑', sans-serif;
             line-height: 1.6;
@@ -111,6 +112,120 @@
             cursor: pointer;
             margin-top: 10px;
         }
+        
+        /* 新增倒计时样式 - 与网站风格保持一致 */
+        .countdown-card {
+            background: rgba(44, 62, 80, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            border: 1px solid #3498db;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .countdown-header {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .countdown-header i {
+            color: #e74c3c;
+            font-size: 2rem;
+        }
+        
+        .days-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0;
+        }
+        
+        .days-box {
+            background: linear-gradient(145deg, #3498db, #2c3e50);
+            color: white;
+            border-radius: 10px;
+            padding: 15px 30px;
+            min-width: 150px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .days-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: #e74c3c;
+        }
+        
+        .days-number {
+            font-size: 3.5rem;
+            font-weight: bold;
+            line-height: 1;
+            margin: 10px 0;
+        }
+        
+        .days-label {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .target-date {
+            color: #2c3e50;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        .progress-container {
+            background: rgba(52, 152, 219, 0.2);
+            height: 12px;
+            border-radius: 6px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #e74c3c, #3498db);
+            border-radius: 6px;
+            width: 0;
+            transition: width 1s ease;
+        }
+        
+        .progress-label {
+            color: #2c3e50;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .current-time {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .article-list {
+                columns: 1;
+            }
+            .countdown-header {
+                font-size: 1.5rem;
+            }
+            .days-number {
+                font-size: 2.8rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -176,13 +291,39 @@
                         <h3>《论语文书📙》</h3>
                         <p>作者：安眠药|字数：--|状态：更新中<br>发疯文学，安眠药远古疯癫力作🙃</p>
                         <h3>《班里部分女生👧的罪行》</h3>
-                        <p>作者：Siri|字数：600|状态：更完了<br>作家协会最早的文章之一，批判现实文学，奠定了整个作家协会的发展基础，目前为“镇会之宝”之一</p>
+                        <p>作者：Siri|字数：600|状态：更完了<br>作家协会最早的文章之一，批判现实文学，奠定了整个作家协会的发展基础，目前为"镇会之宝"之一</p>
                         <h3>《论璇(文言版)》</h3>
                         <p>作者：消炎药|字数：300|状态：百度翻译抽风了<br>受到〈女生罪行〉影响，写出的损YJX的文章的文言版本，镇会之宝之二（虽然因为*度翻译抽风写不完）</p>
                         <h3>《论26 zqy》</h3>
                         <p>|字数：400|状态：更完了<br>《论璇》衍生作品，消炎药远古损人文章🤗</p>
-                        <h3>距离作协1周年还有</h3>
                         
+                        <!-- 新增倒计时卡片 -->
+                        <div class="countdown-card">
+                            <div class="countdown-header">
+                                <i class="fas fa-calendar-alt"></i>
+                                <h3>距离作协1周年还有</h3>
+                            </div>
+                            
+                            <div class="days-container">
+                                <div class="days-box">
+                                    <div class="days-number" id="days-count">135</div>
+                                    <div class="days-label">天</div>
+                                </div>
+                            </div>
+                            
+                            <div class="target-date">
+                                目标日期: 2025年12月17日
+                            </div>
+                            
+                            <div class="progress-container">
+                                <div class="progress-bar" id="progress-bar"></div>
+                            </div>
+                            <div class="progress-label" id="progress-text">周年倒计时进度: 0%</div>
+                            
+                            <div class="current-time" id="current-time">
+                                当前时间: 正在加载...
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -193,7 +334,7 @@
                     <li>🧠 销舲鱽超绝肌肉线条.jpg</li>
                     <li>💥同学群</li>
                     <li>🤪 啊？</li>
-                    <li>📅 下次病友会：瑶瑶无期</li>
+                    <li>📅 下次病友会：7月11号如何？</li>
                     <li>❗毕业后zuō协文章等遗产如何分配？❗</li>
                 </ul>
             </div>
@@ -210,6 +351,9 @@
         </div>
     </div>
 
+    <!-- Font Awesome 图标库 -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
     <script>
         // 内容切换功能
         function showContent(sectionId) {
@@ -228,7 +372,7 @@
         const articles = {
             article1: {
                 title: '《xx小学的环境、制度、学生精神・制度🤮🤢》',
-                content: localStorage.getItem('article1') || `100010101010`
+                content: localStorage.getItem('article1') || `校长太帅啦！！！！`
             }
         };
 
@@ -279,7 +423,7 @@
 
         document.getElementById('modalOverlay').onclick = closeModal;
 
-         // 周年倒计时功能
+        // 周年倒计时功能
         function updateCountdown() {
             // 设置目标日期 (2025年12月17日)
             const targetDate = new Date('2025-12-17T00:00:00');
@@ -327,8 +471,8 @@
         
         // 每秒更新一次倒计时
         setInterval(updateCountdown, 1000);
-        
-        //会员信息功能
+
+        // 会员信息功能
         const members = {
             'anmianyao':{
                 name:'安眠药',
@@ -441,9 +585,8 @@
         
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
-            createStars();
+            // 原有初始化代码
         });
     </script>
 </body>
 </html>
-
