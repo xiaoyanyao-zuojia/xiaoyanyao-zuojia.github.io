@@ -64,7 +64,7 @@
             break-inside: avoid;
             margin-bottom: 1.5rem;
         }
-        .article-modal {
+        .article-modal, .member-modal { /* 新增会员模态框样式 */
             display: none;
             position: fixed;
             top: 50%;
@@ -215,6 +215,51 @@
             margin-top: 15px;
         }
         
+        /* 会员信息样式 */
+        .member-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .member-avatar {
+            width: 60px;
+            height: 60px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .member-name {
+            margin: 0;
+            color: #2c3e50;
+        }
+        .member-title {
+            color: #7f8c8d;
+        }
+        .member-info {
+            margin: 15px 0;
+        }
+        .info-label {
+            display: inline-block;
+            width: 100px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .member-quote {
+            font-style: italic;
+            border-left: 3px solid #3498db;
+            padding-left: 15px;
+            margin: 20px 0;
+            color: #555;
+        }
+        
         @media (max-width: 768px) {
             .article-list {
                 columns: 1;
@@ -230,9 +275,9 @@
 </head>
 <body>
     <nav>
-        <a href="#" onclick="showContent('home')" class="active">首页</a>
-        <a href="#" onclick="showContent('about')">关于我们</a>
-        <a href="#" onclick="showContent('articles')">文章和其他</a>
+        <a href="#" onclick="showContent('home', event)" class="active">首页</a>
+        <a href="#" onclick="showContent('about', event)">关于我们</a>
+        <a href="#" onclick="showContent('articles', event)">文章和其他</a>
     </nav>
 
     <div class="container">
@@ -248,8 +293,9 @@
                 <li>每天笑四一个读者</li>
                 <li>贯彻疯疯颠颠、每天按时发癫的方针</li>
                 <li>发扬神金精神</li>
-            <h2>本疗程话题：目前还有一个作协网站概念版，仅存活于DeepSeek写的一大堆代码里</h2>
             </ul>
+            <!-- 修复：将h2移出ul标签，修正HTML结构 -->
+            <h2>本疗程话题：目前还有一个作协网站概念版，仅存活于DeepSeek写的一大堆代码里</h2>
         </div>
 
         <div id="about" class="content-section">
@@ -258,11 +304,12 @@
             <p>xx小学作（zuō）家协会成立于2024年12月，个人会员7人。协会涵盖废话文学、批判现实文学、神金文学、发疯文学等各个文学门类</p>
             <h2>目前成员</h2>
             <ul>
-                <li>程序技术：deepseek、Siri</li>
-                <li>美术表现：降压药、后悔药</li>
-                <li>写作：粽子、安眠药、消炎药</li>
-                <li>策划：豆包、止痛药</li>
-                <li>运营：无可救药</li>
+                <!-- 修复：添加点击事件，用于查看会员详情 -->
+                <li>程序技术：deepseek、<a href="#" onclick="showMemberInfo('siri', event)">Siri</a></li>
+                <li>美术表现：<a href="#" onclick="showMemberInfo('jiangyayao', event)">降压药</a>、<a href="#" onclick="showMemberInfo('houhuiyao', event)">后悔药</a></li>
+                <li>写作：<a href="#" onclick="showMemberInfo('zongzi', event)">粽子</a>、<a href="#" onclick="showMemberInfo('anmianyao', event)">安眠药</a>、<a href="#" onclick="showMemberInfo('xiaoyanyao', event)">消炎药</a></li>
+                <li>策划：豆包、<a href="#" onclick="showMemberInfo('zhitongyao', event)">止痛药</a></li>
+                <li>运营：<a href="#" onclick="showMemberInfo('wukejiuyao', event)">无可救药</a></li>
             </ul>
             <h2>主要职责</h2>
             <ul>
@@ -290,44 +337,54 @@
                     <div class="article-item">
                         <h3>《学校异闻录》</h3>
                         <p>作者：降压药|字数：114514|状态：更新中<br>降压药旗下潜力股，引人入胜的中篇小说，敬请期待</p>
+                    </div>
+                    <div class="article-item">
                         <h3>《论语文书📙》</h3>
                         <p>作者：安眠药|字数：--|状态：更新中<br>发疯文学，安眠药远古疯癫力作🙃</p>
+                    </div>
+                    <div class="article-item">
                         <h3>《班里部分女生👧的罪行》</h3>
                         <p>作者：Siri|字数：600|状态：更完了<br>作家协会最早的文章之一，批判现实文学，奠定了整个作家协会的发展基础，目前为"镇会之宝"之一</p>
+                    </div>
+                    <div class="article-item">
                         <h3>《论璇(文言版)》</h3>
                         <p>作者：消炎药|字数：300|状态：百度翻译抽风了<br>受到〈女生罪行〉影响，写出的损YJX的文章的文言版本，镇会之宝之二（虽然因为*度翻译抽风写不完）</p>
+                    </div>
+                    <div class="article-item">
                         <h3>《Level School》</h3>
                         <p>作者：降压药|字数：1145|状态：更新中<br>降压药作品之二，融合诡异、悬疑元素的又一潜力股</p>
+                    </div>
+                    <div class="article-item">
                         <h3>《沉睡时代》</h3>
                         <p>作者：后悔药|字数：--|状态：更新中<br>“用最清醒的文字描写最混沌的沉睡”</p>
-                        
-                        <!-- 新增倒计时卡片 -->
-                        <div class="countdown-card">
-                            <div class="countdown-header">
-                                <i class="fas fa-calendar-alt"></i>
-                                <h3>距离作协1周年还有</h3>
-                            </div>
-                            
-                            <div class="days-container">
-                                <div class="days-box">
-                                    <div class="days-number" id="days-count">135</div>
-                                    <div class="days-label"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="target-date">
-                                目标日期: 2025年12月17日
-                            </div>
-                            
-                            <div class="progress-container">
-                                <div class="progress-bar" id="progress-bar"></div>
-                            </div>
-                            <div class="progress-label" id="progress-text">周年倒计时进度: 0%</div>
-                            
-                            <div class="current-time" id="current-time">
-                                当前时间: 正在加载...
-                            </div>
+                    </div>
+                </div>
+                
+                <!-- 修复：将倒计时卡片移出article-item，作为独立部分 -->
+                <div class="countdown-card">
+                    <div class="countdown-header">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3>距离作协1周年还有</h3>
+                    </div>
+                    
+                    <div class="days-container">
+                        <div class="days-box">
+                            <div class="days-number" id="days-count">135</div>
+                            <div class="days-label">天</div> <!-- 修复：添加"天"标签 -->
                         </div>
+                    </div>
+                    
+                    <div class="target-date">
+                        目标日期: 2025年12月17日
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <div class="progress-label" id="progress-text">周年倒计时进度: 0%</div>
+                    
+                    <div class="current-time" id="current-time">
+                        当前时间: 正在加载...
                     </div>
                 </div>
             </div>
@@ -346,6 +403,7 @@
         </div>
     </div>
 
+    <!-- 修复：添加会员模态框元素 -->
     <div class="modal-overlay" id="modalOverlay"></div>
     <div class="article-modal" id="articleModal">
         <h2 id="articleTitle"></h2>
@@ -355,13 +413,23 @@
             <button onclick="closeModal()" style="background:#e74c3c">❌ 关闭</button>
         </div>
     </div>
+    <div class="member-modal" id="memberModal"> <!-- 新增会员模态框 -->
+        <div id="memberDetails"></div>
+        <div class="edit-tools">
+            <button onclick="closeMemberModal()" style="background:#e74c3c">❌ 关闭</button>
+        </div>
+    </div>
 
     <!-- Font Awesome 图标库 -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     
     <script>
         // 内容切换功能
-        function showContent(sectionId) {
+        // 修复：添加event参数并检查是否存在
+        function showContent(sectionId, event) {
+            // 防止事件未定义导致错误
+            if (event) event.preventDefault();
+            
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.remove('active');
             });
@@ -370,7 +438,10 @@
             document.querySelectorAll('nav a').forEach(link => {
                 link.classList.remove('active');
             });
-            event.target.classList.add('active');
+            // 修复：使用event.target前先检查
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
         }
 
         // 文章编辑功能
@@ -551,11 +622,23 @@
                 works: '《考试后遗症治疗手册》',
                 status: '19版持续更新',
                 desc: '专门创作治愈心灵创伤的文字。读者反馈：读前头疼，读时发笑，读后忘记为何头疼，疗效显著。'
+            },
+            'jiangyayao': {  // 补充降压药信息
+                name: '降压药',
+                title: '悬疑文学大师',
+                specialty: '诡异悬疑文学',
+                level: '高压患者专供',
+                quote: '越是平静的校园，越隐藏着不为人知的秘密',
+                works: '《学校异闻录》、《Level School》',
+                status: '更新中',
+                desc: '擅长营造紧张诡异的氛围，能用文字让读者血压骤升又骤降，达到"降压"效果。'
             }
         };
 
-        function showMenberInfo(menberId) {
-            const menber = members[memberId];
+        // 修复：修正函数名拼写错误(Menber→Member)和参数错误
+        function showMemberInfo(memberId, event) {
+            if (event) event.preventDefault(); // 阻止链接默认行为
+            const member = members[memberId];
             if (!member) return;
 
             const detailsHtml = `
@@ -586,6 +669,7 @@
             document.getElementById('memberModal').style.display = 'block';
         }
 
+        // 修复：添加会员模态框关闭函数
         function closeMemberModal() {
             document.getElementById('modalOverlay').style.display = 'none';
             document.getElementById('memberModal').style.display = 'none';
@@ -593,10 +677,14 @@
         
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // 原有初始化代码
+            // 点击遮罩层也可关闭会员模态框
+            document.getElementById('modalOverlay').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                    closeMemberModal();
+                }
+            });
         });
     </script>
 </body>
 </html>
-
-
