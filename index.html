@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <!-- 增强版（适配更多设备） -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico.png">
     <meta charset="UTF-8">
@@ -284,7 +283,7 @@
         <div id="home" class="content-section active">
             <h1>欢迎来到作(zuō)家协会！😊</h1>
             <p>xx小学作家协会是消炎药领导的，由一群沈瑾自发组织而成的抽象文学协会，创立于2024年12月。</p>
-            <p>最近更新时间：2025/11/26</p>
+            <p>最近更新时间：2025/11/28</p>
             <p>本次更新内容：救活了本网站</p>
             <p>作协一周年网站特殊版本筹备中...</p>
             <h2>我们的宗旨</h2>
@@ -358,13 +357,13 @@
                 
                 <div class="countdown-card">
                     <div class="countdown-header">
-                        <i class="fas fa-calendar-alt"></i>
+                        <i class="fas fa-calendar-days"></i>
                         <h3>距离作协1周年还有</h3>
                     </div>
                     
                     <div class="days-container">
                         <div class="days-box">
-                            <div class="days-number" id="days-count">135</div>
+                            <div class="days-number" id="days-count">计算中…</div>
                             <div class="days-label">天</div> <!-- 修复：添加"天"标签 -->
                         </div>
                     </div>
@@ -470,7 +469,7 @@
             const isEditing = contentDiv.classList.toggle('edit-mode');
             
             if(isEditing) {
-                const currentContent = contentDiv.innerHTML.replace(/<br>/g, '\n');
+                const currentContent = contentDiv.innerHTML.replace(/<br\s*\/?>/g, '\n');
                 contentDiv.innerHTML = `
                     <textarea class="edit-textarea" id="editContent">${currentContent}</textarea>
                     <div style="text-align:right; margin-top:10px">
@@ -493,8 +492,6 @@
             localStorage.setItem(currentArticleId, articles[currentArticleId].content);
             toggleEdit();
         }
-
-        document.getElementById('modalOverlay').onclick = closeModal;
 
         // 周年倒计时功能
         function updateCountdown() {
@@ -633,7 +630,7 @@
                 specialty: '古风小生',
                 level: '变色龙爱吃',
                 quote: '',
-                works: '《璇》',
+                works: '《至暗时刻》',
                 status: '在飞行',
                 desc: '2131231325251235'
             },
@@ -642,10 +639,11 @@
                 title: '御用画师',
                 specialty: '极简美学',
                 level: '离别与开始',
-                quote: '耶？',
+                quote: '黑白分明的眼眸，倒映出的究竟是善还是恶',
                 works: '海螺文学社一周年贺图•《我写故我在》',
                 status: '玩光遇',
                 desc: ''
+            },
         };
 
         function showMemberInfo(memberId, event) {
@@ -700,5 +698,3 @@
     </script>
 </body>
 </html>
-
-
