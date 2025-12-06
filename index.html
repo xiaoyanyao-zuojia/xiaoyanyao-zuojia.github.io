@@ -265,6 +265,59 @@
             margin: 20px 0;
             color: #555;
         }
+
+        /* 烟花样式 */
+        #fireworksCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        }
+
+        .anniversary-active #fireworksCanvas {
+            display: block;
+        }
+
+        .fireworks-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(106, 17, 203, 0.9);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            z-index: 10000;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            animation: pulse 2s infinite;
+            display: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .anniversary-active .fireworks-message {
+            display: block;
+        }
+
+        .anniversary-notice {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
         
         @media (max-width: 768px) {
             .article-list {
@@ -424,12 +477,18 @@
         </div>
     </div>
 
+    <!--烟花元素-->
+    <canvas id="fireworksCanvas"></canvas>
+    <div class="fireworks-message" id="fireworksMessage">
+        🎉 作协一周年快乐！ 🎉<br>
+        <span style="font-size: 1rem;">2024.12.17 - 2025.12.17</span>
+    </div>
+    
     <!-- Font Awesome 图标库 -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     
     <script>
         // 内容切换功能
-        // 修复：添加event参数并检查是否存在
         function showContent(sectionId, event) {
             // 防止事件未定义导致错误
             if (event) event.preventDefault();
@@ -694,6 +753,177 @@
             document.getElementById('modalOverlay').style.display = 'none';
             document.getElementById('memberModal').style.display = 'none';
         }
+
+        / 烟花特效系统
+        const fireworksCanvas = document.getElementById('fireworksCanvas');
+        const fireworksCtx = fireworksCanvas.getContext('2d');
+        let fireworks = [];
+        let animationId = null;
+
+        function setupFireworksCanvas() {
+            fireworksCanvas.width = window.innerWidth;
+            fireworksCanvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', setupFireworksCanvas);
+        setupFireworksCanvas();
+
+        class Particle {
+            constructor(x, y, color, velocity) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.velocity = velocity;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.02 + 0.01;
+                this.size = Math.random() * 2 + 1;
+            }
+            
+            update() {
+                this.velocity.x *= 0.99;
+                this.velocity.y *= 0.99;
+                this.velocity.y += 0.05;
+                
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                
+                this.alpha -= this.decay;
+                
+                return this.alpha > 0;
+            }
+            
+            draw() {
+                fireworksCtx.save();
+                fireworksCtx.globalAlpha = this.alpha;
+                fireworksCtx.fillStyle = this.color;
+                fireworksCtx.beginPath();
+                fireworksCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                fireworksCtx.fill();
+                fireworksCtx.restore();
+            }
+        }
+
+        class Firework {
+            constructor(x, y, targetY, color) {
+                this.x = x;
+                this.y = y;
+                this.targetY = targetY;
+                this.color = color;
+                this.velocity = { x: 0, y: -8 };
+                this.particles = [];
+                this.exploded = false;
+            }
+            
+            update() {
+                if (!this.exploded) {
+                    this.velocity.y *= 0.99;
+                    this.y += this.velocity.y;
+                    
+                    if (this.y <= this.targetY) {
+                        this.explode();
+                    }
+                }
+                
+                this.particles = this.particles.filter(particle => particle.update());
+            }
+            
+            explode() {
+                this.exploded = true;
+                const particleCount = 100;
+                const colors = [this.color, '#ffffff', '#ffff00'];
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const velocity = {
+                        x: (Math.random() - 0.5) * 8,
+                        y: (Math.random() - 0.5) * 8
+                    };
+                    
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    this.particles.push(new Particle(this.x, this.y, color, velocity));
+                }
+            }
+            
+            draw() {
+                if (!this.exploded) {
+                    fireworksCtx.save();
+                    fireworksCtx.fillStyle = this.color;
+                    fireworksCtx.beginPath();
+                    fireworksCtx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                    fireworksCtx.fill();
+                    fireworksCtx.restore();
+                }
+                
+                this.particles.forEach(particle => particle.draw());
+            }
+        }
+
+        function createFirework() {
+            const x = Math.random() * fireworksCanvas.width;
+            const targetY = Math.random() * (fireworksCanvas.height / 2);
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            fireworks.push(new Firework(x, fireworksCanvas.height, targetY, color));
+        }
+
+        function animateFireworks() {
+            fireworksCtx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            fireworksCtx.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+            
+            if (Math.random() < 0.05) {
+                createFirework();
+            }
+            
+            fireworks.forEach(firework => {
+                firework.update();
+                firework.draw();
+            });
+            
+            for (let i = fireworks.length - 1; i >= 0; i--) {
+                if (fireworks[i].particles.length === 0 && fireworks[i].exploded) {
+                    fireworks.splice(i, 1);
+                }
+            }
+            
+            animationId = requestAnimationFrame(animateFireworks);
+        }
+
+        function startFireworks() {
+            document.body.classList.add('anniversary-active');
+            animateFireworks();
+            
+            setTimeout(stopFireworks, 30000);
+        }
+
+        function stopFireworks() {
+            document.body.classList.remove('anniversary-active');
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            fireworks = [];
+            
+            fireworksCtx.fillStyle = 'rgba(0, 0, 0, 1)';
+            fireworksCtx.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+        }
+
+        function checkAnniversary() {
+            const now = new Date();
+            const targetDate = new Date('2025-12-17T14:26:00');
+            
+            if (now >= targetDate) {
+                startFireworks();
+                return;
+            }
+            
+            const timeDiff = targetDate - now;
+            if (timeDiff > 0) {
+                setTimeout(startFireworks, timeDiff);
+            }
+        }
+
+        function testFireworks() {
+            startFireworks();
+        }
         
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
@@ -708,4 +938,3 @@
     </script>
 </body>
 </html>
-
