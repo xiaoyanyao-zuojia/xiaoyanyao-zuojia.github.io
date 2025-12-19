@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作协烟花观赏区</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            font-family: '微软雅黑', sans-serif;
+            overflow: hidden;
+        }
+        
+        #fireworksCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .control-panel {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            z-index: 1000;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 2px solid #3498db;
+        }
+        
+        .title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #3498db;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        button {
+            background: linear-gradient(145deg, #3498db, #2c3e50);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .back-btn {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+        }
+        
+        .fireworks-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(106, 17, 203, 0.9);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            z-index: 999;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            animation: pulse 2s infinite;
+            display: none;
+        }
+        
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="control-panel">
+        <div class="title">🎆 作协烟花观赏区</div>
+        <div class="subtitle">点击下方按钮开始放烟花</div>
+        <div class="buttons">
+            <button onclick="startFireworks()">🎇 发射烟花</button>
+            <button onclick="stopFireworks()">⏹️ 停止烟花</button>
+            <button onclick="location.href='index.html'" class="back-btn">🏠 返回主站</button>
+        </div>
+    </div>
+    
+    <canvas id="fireworksCanvas"></canvas>
+    <div class="fireworks-message" id="fireworksMessage">
+        🎉 作协一周年快乐！ 🎉
+    </div>
+    
+    <script src="fireworks.js">
+      // fireworks.js - 独立烟花特效系统（移除时间判定）
+
+class Particle {
+    constructor(x, y, color, velocity) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.velocity = velocity;
+        this.alpha = 1;
+        this.decay = Math.random() * 0.02 + 0.01;
+        this.size = Math.random() * 2 + 1;
+    }
+    
+    update() {
+        this.velocity.x *= 0.99;
+        this.velocity.y *= 0.99;
+        this.velocity.y += 0.05;
+        
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
+        this.alpha -= this.decay;
+        
+        return this.alpha > 0;
+    }
+    
+    draw() {
+        fireworksCtx.save();
+        fireworksCtx.globalAlpha = this.alpha;
+        fireworksCtx.fillStyle = this.color;
+        fireworksCtx.beginPath();
+        fireworksCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        fireworksCtx.fill();
+        fireworksCtx.restore();
+    }
+}
+
+class Firework {
+    constructor(x, y, targetY, color) {
+        this.x = x;
+        this.y = y;
+        this.targetY = targetY;
+        this.color = color;
+        this.velocity = { x: 0, y: -8 };
+        this.particles = [];
+        this.exploded = false;
+    }
+    
+    update() {
+        if (!this.exploded) {
+            this.velocity.y *= 0.99;
+            this.y += this.velocity.y;
+            
+            if (this.y <= this.targetY) {
+                this.explode();
+            }
+        }
+        
+        this.particles = this.particles.filter(particle => particle.update());
+    }
+    
+    explode() {
+        this.exploded = true;
+        const particleCount = 100;
+        const colors = [this.color, '#ffffff', '#ffff00'];
+        
+        for (let i = 0; i < particleCount; i++) {
+            const velocity = {
+                x: (Math.random() - 0.5) * 8,
+                y: (Math.random() - 0.5) * 8
+            };
+            
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            this.particles.push(new Particle(this.x, this.y, color, velocity));
+        }
+    }
+    
+    draw() {
+        if (!this.exploded) {
+            fireworksCtx.save();
+            fireworksCtx.fillStyle = this.color;
+            fireworksCtx.beginPath();
+            fireworksCtx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+            fireworksCtx.fill();
+            fireworksCtx.restore();
+        }
+        
+        this.particles.forEach(particle => particle.draw());
+    }
+}
+
+// 全局变量
+const fireworksCanvas = document.getElementById('fireworksCanvas');
+const fireworksCtx = fireworksCanvas.getContext('2d');
+const messageElement = document.getElementById('fireworksMessage');
+let fireworks = [];
+let animationId = null;
+
+function setupCanvas() {
+    fireworksCanvas.width = window.innerWidth;
+    fireworksCanvas.height = window.innerHeight;
+}
+
+function createFirework() {
+    const x = Math.random() * fireworksCanvas.width;
+    const targetY = Math.random() * (fireworksCanvas.height / 2);
+    const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    
+    fireworks.push(new Firework(x, fireworksCanvas.height, targetY, color));
+}
+
+function animate() {
+    fireworksCtx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    fireworksCtx.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+    
+    if (Math.random() < 0.05) {
+        createFirework();
+    }
+    
+    fireworks.forEach(firework => {
+        firework.update();
+        firework.draw();
+    });
+    
+    for (let i = fireworks.length - 1; i >= 0; i--) {
+        if (fireworks[i].particles.length === 0 && fireworks[i].exploded) {
+            fireworks.splice(i, 1);
+        }
+    }
+    
+    animationId = requestAnimationFrame(animate);
+}
+
+function showMessage(text = "🎉 作协一周年快乐！ 🎉") {
+    if (messageElement) {
+        messageElement.innerHTML = text;
+        messageElement.style.display = 'block';
+        setTimeout(() => {
+            messageElement.style.display = 'none';
+        }, 2000);
+    }
+}
+
+function startFireworks() {
+    if (!fireworksCanvas) return;
+    
+    setupCanvas();
+    animate();
+    showMessage();
+    
+    console.log('🎆 烟花已开始发射！');
+}
+
+function stopFireworks() {
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
+    fireworks = [];
+    
+    fireworksCtx.fillStyle = 'rgba(0, 0, 0, 1)';
+    fireworksCtx.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+    
+    console.log('⏹️ 烟花已停止');
+}
+
+// 页面初始化
+window.addEventListener('load', () => {
+    setupCanvas();
+    window.addEventListener('resize', setupCanvas);
+    
+    // 页面加载后自动开始烟花（可选）
+    // setTimeout(startFireworks, 1000);
+});
+
+// 全局导出函数
+window.startFireworks = startFireworks;
+window.stopFireworks = stopFireworks;
+    </script>
+</body>
+</html>
