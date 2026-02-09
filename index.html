@@ -1,40 +1,991 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <!-- 增强版（适配更多设备） -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon.ico.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>zuō家协会</title>
     <style>
-        /* 原有样式保持不变 */
+        /* 新主题的基础样式 */
         body {
             font-family: '微软雅黑', sans-serif;
             line-height: 1.6;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background-attachment: fixed;
         }
         nav {
-            background-color: #e74c3c;
+            background-color: rgba(44, 62, 80, 0.9);
             padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         nav a {
             color: white;
             text-decoration: none;
             margin-right: 20px;
-            padding: 5px 10px;
+            padding: 8px 15px;
             transition: all 0.3s;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
         }
         nav a:hover {
-            background-color: #c0392b;
+            background-color: #3498db;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         .active {
-            border-bottom: 2px solid #ffcc00;
+            background-color: #3498db;
+            border-bottom: 2px solid #fff;
         }
         .container {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.95);
+            min-height: 500px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #3498db, #2ecc71, #e74c3c, #f39c12, #9b59b6);
+            border-radius: 15px 15px 0 0;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 2.2em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #3498db;
+            font-size: 1.8em;
+            margin-top: 1.5em;
+            position: relative;
+            padding-left: 15px;
+        }
+        h2::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 80%;
+            width: 6px;
+            background: #3498db;
+            border-radius: 3px;
+        }
+        h3 {
+            color: #2c3e50;
+            margin-top: 1em;
+        }
+        .article-list {
+            columns: 2;
+            margin-top: 1rem;
+            column-gap: 30px;
+        }
+        .article-item {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+            padding: 15px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+        .article-item:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .article-modal, .member-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.4);
+            z-index: 1000;
+            border-radius: 15px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .member-modal {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+        }
+        .edit-mode {
+            border: 2px dashed #3498db;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .edit-tools {
+            text-align: right;
+            margin-top: 1.5rem;
+        }
+        .edit-textarea {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            font-family: '微软雅黑', sans-serif;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 1em;
+        }
+        .read-button {
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+        }
+        .read-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+        }
+        .member-link {
+            color: #e74c3c;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            padding: 3px 8px;
+            border-radius: 5px;
+            display: inline-block;
+            position: relative;
+        }
+        .member-link:hover {
+            background-color: rgba(231, 76, 60, 0.1);
+            transform: translateX(3px);
+            text-decoration: underline;
+        }
+        .member-link::after {
+            content: "➔";
+            margin-left: 5px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .member-link:hover::after {
+            opacity: 1;
+        }
+        .member-details {
+            padding: 20px;
+        }
+        .member-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            padding-bottom: 20px;
+        }
+        .member-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            margin-right: 25px;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .member-name {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        .member-title {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        .member-info {
+            margin-bottom: 20px;
+        }
+        .info-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 100px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        .info-value {
+            display: inline-block;
+        }
+        .member-quote {
+            font-style: italic;
+            padding: 15px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid white;
+        }
+        .close-member-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .close-member-modal:hover {
+            transform: rotate(90deg) scale(1.2);
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            font-size: 0.9em;
+            background: rgba(0,0,0,0.3);
+            margin-top: 40px;
+            border-radius: 0 0 15px 15px;
+        }
+        
+        /* 旧主题特有的样式 */
+        .countdown-card {
+            background: rgba(44, 62, 80, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            border: 1px solid #3498db;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .countdown-header {
+            font-size: 1.8rem;
+            color: #6a11cb;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .countdown-header i {
+            color: #e74c3c;
+            font-size: 2rem;
+        }
+        
+        .days-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0;
+        }
+        
+        .days-number {
+            font-size: 3.5rem;
+            font-weight: bold;
+            line-height: 1;
+            margin: 10px 0;
+        }
+        
+        .days-label {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .target-date {
+            color: #2c3e50;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        .progress-container {
+            background: rgba(52, 152, 219, 0.2);
+            height: 12px;
+            border-radius: 6px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #e74c3c, #f1c40f);
+            border-radius: 6px;
+            width: 0;
+            transition: width 1s ease;
+        }
+        
+        .progress-label {
+            color: #2c3e50;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .current-time {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+
+        .anniversary-notice {
+            background: linear-gradient(135deg, #6a11cc, #2575fc);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .fireworks-link {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 25px 0;
+            text-align: center;
+            border: 2px solid #f1c40f;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .fireworks-link a {
+            display: inline-block;
+            background: white;
+            color: #6a11cb;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .fireworks-link a:hover {
+            background: #f1f1f1;
+            border-color: #3498db;
+        }
+
+        /* 烟花样式 */
+        #fireworksCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        }
+
+        .anniversary-active #fireworksCanvas {
+            display: block;
+        }
+
+        .fireworks-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(106, 17, 203, 0.9);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            z-index: 10000;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            animation: pulse 2s infinite;
+            display: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .anniversary-active .fireworks-message {
+            display: block;
+        }
+
+        /* 新主题的星星背景 */
+        .crazy-stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle linear infinite;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0); }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .article-list {
+                columns: 1;
+            }
+            .container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            .member-modal {
+                width: 90%;
+                padding: 1.5rem;
+            }
+            .member-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .member-avatar {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            .countdown-header {
+                font-size: 1.5rem;
+            }
+            .days-number {
+                font-size: 2.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 新主题的星星背景 -->
+    <div class="crazy-stars" id="crazyStars"></div>
+    
+    <!-- 新主题样式的导航栏 -->
+    <nav>
+        <a href="#" onclick="showContent('home', event)" class="active">首页</a>
+        <a href="#" onclick="showContent('about', event)">关于我们</a>
+        <a href="#" onclick="showContent('articles', event)">文章和其他</a>
+    </nav>
+
+    <div class="container">
+        <!-- 首页内容（保持旧主题的所有内容） -->
+        <div id="home" class="content-section active">
+            <h1>欢迎来到作(zuō家协会！😊</h1>
+            <p>xx小学作家协会是消炎药领导的，由一群沈瑾自发组织而成的抽象文学协会，创立于2024年12月。</p>
+            <p>最近更新时间：2026/1/1</p>
+            <p>本次更新内容：你们找找</p>
+            
+            <h2>我们的宗旨</h2>
+            <ul>
+                <li>坚持写小杂文的方向</li>
+                <li>批判某些不合理制度</li>
+                <li>寻找类人用作写作素材</li>
+                <li>发扬神金精神</li>
+            </ul>
+            
+            <!-- 周年倒计时（旧主题功能） -->
+            <div class="countdown-card">
+                <div class="countdown-header">
+                    <i class="fas fa-clock"></i>
+                    <span>协会周年倒计时</span>
+                </div>
+                
+                <div class="days-container">
+                    <div style="text-align: center;">
+                        <div class="days-number" id="days-count">0</div>
+                        <div class="days-label">剩余天数</div>
+                    </div>
+                </div>
+                
+                <div class="target-date">
+                    目标日期: 2025年12月14日 14:26
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                
+                <div class="progress-label" id="progress-text">
+                    周年倒计时进度: 0.00%
+                </div>
+                
+                <div class="current-time" id="current-time">
+                    当前时间: 正在加载...
+                </div>
+            </div>
+            
+            <h2>本疗程话题：LOFTER账号已开通!进入LOFTER以获取我们的更多成员信息,文章更新等内容🎉</h2>
+            
+            <!-- 烟花庆典区（旧主题功能） -->
+            <div class="fireworks-link">
+                <h3 style="margin-top: 0;">🎆 特别庆典区</h3>
+                <p>点击下方按钮进入独立烟花燃放站，随时随地庆祝！</p>
+                <a href="fireworks.html">🚀 空降烟花燃放区</a>
+                <p style="font-size: 12px; margin-top: 10px; color: rgba(255,255,255,0.8);">
+                    新窗口打开，可随时返回主站
+                </p>
+            </div>
+        </div>
+
+        <!-- 关于我们内容（保持旧主题的所有内容） -->
+        <div id="about" class="content-section">
+            <h1>关于我们</h1>
+            <h2>协会简介</h2>
+            <p>xx小学作（zuō）家协会成立于2024年12月，个人成员10人。协会涵盖废话文学、批判现实文学、神金文学、发疯文学等各个文学门类</p>
+            <h2>目前成员</h2>
+            <ul>
+                <li>程序技术：deepseek、<span class="member-link" onclick="showMemberInfo('siri', event)">Siri</span></li>
+                <li>美术表现：<span class="member-link" onclick="showMemberInfo('jiangyayao', event)">降压药</span>、<span class="member-link" onclick="showMemberInfo('Departure', event)">『离』</span></li>
+                <li>写作：<span class="member-link" onclick="showMemberInfo('kunchong', event)">昆虫</span>、<span class="member-link" onclick="showMemberInfo('houhuiyao', event)">后悔药</span>、<span class="member-link" onclick="showMemberInfo('anmianyao', event)">安眠药</span>、<span class="member-link" onclick="showMemberInfo('xiaoyanyao', event)">消炎药</span></li>
+                <li>策划：豆包、<span class="member-link" onclick="showMemberInfo('zhitongyao', event)">止痛药</span></li>
+                <li>运营：<span class="member-link" onclick="showMemberInfo('wukejiuyao', event)">无可救药</span></li>
+            </ul>
+            <h2>主要职责</h2>
+            <ul>
+                <li>写各种发颠文章</li>
+                <li>变异</li>
+                <li>睡觉</li>
+                <li>呼吸</li>
+            </ul>
+            <h2>加入我们</h2>
+            <p>指挥部地址：~~商场南侧YS大楼摸鱼中心82层西侧咖啡厅</p>
+            <p>文章写作限制:禁止违反法律,损害他人合法权益内容出现</p>
+        </div>
+
+        <!-- 文章内容（保持旧主题的所有内容） -->
+        <div id="articles" class="content-section">
+            <h1>📚 文章和其他</h1>
+            <div class="subsection">
+                <h2>海螺文学社的部分作品🥳</h2>
+                <div class="article-list">
+                    <div class="article-item">
+                        <h3>《xx小学的环境、制度、学生精神· 制度🤮🤢》</h3>
+                        <p>作者：消炎药|字数：--|状态：写完了<br>消炎药的批判性文学代表作，深刻揭露大潇澪氘的**</p>
+                        <button class="read-button" onclick="showArticle('article1')">🚀 阅读发癫文章</button>
+                    </div>
+                    <div class="article-item">
+                        <h3>《作家协会•兴盛与抉择》</h3>
+                        <p>作者：降压药、消炎药|字数：648|状态：更新中<br>降压药与消炎药合作的小说，诞生与新兴续作，敬请期待</p>
+                    </div>
+                    <div class="article-item">
+                        <h3>《作家协会•诞生与新兴》</h3>
+                        <p>作者：消炎药|字数：10012+|状态：更新中<br>消炎药尝试的第一篇小说，基于真实经历改编而成</p>
+                    </div>
+                    <div class="article-item">
+                        <h3>《班里部分女生👧的罪行》</h3>
+                        <p>作者：Siri|字数：600|状态：更完了<br>作家协会最早的文章之一，批判现实文学，奠定了整个作家协会的发展基础，目前为"镇会之宝"之一</p>
+                    </div>
+                    <div class="article-item">
+                        <h3>《Level School》</h3>
+                        <p>作者：降压药|字数：29000+|状态：更新中<br>降压药作品之二，融合诡异、悬疑元素的又一代表作</p>
+                    </div>
+                    <div class="article-item">
+                        <h3>《内卷•作协往事》</h3>
+                        <p>作者：后悔药|字数：--|状态：更新中<br>中式··题材的小说，用最锋利的文笔描写最痛苦的处境……</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h2>其他内容</h2>
+                <ul>
+                    <li>🧠 哥哥我美吗.jpg</li>
+                    <li>💥同学群</li>
+                    <li>🤪 啊？</li>
+                    <li>📅 下次病友会：寒假或元旦</li>
+                    <li>❗❗</li>
+                    <li>🙏求教：作协周年庆活动策划及流程🙏</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+    
+    <!-- 文章模态框 -->
+    <div class="article-modal" id="articleModal">
+        <h2 id="articleTitle"></h2>
+        <div id="articleContent"></div>
+        <div class="edit-tools">
+            <button onclick="toggleEdit()" style="background:#2ecc71; color:white; padding:8px 15px; border:none; border-radius:5px; cursor:pointer;">📝 单击此处修改</button>
+            <button onclick="closeModal()" style="background:#e74c3c; color:white; padding:8px 15px; border:none; border-radius:5px; cursor:pointer;">❌ 关闭</button>
+        </div>
+    </div>
+    
+    <!-- 会员模态框（新主题样式） -->
+    <div class="member-modal" id="memberModal">
+        <button class="close-member-modal" onclick="closeMemberModal()">×</button>
+        <div class="member-details" id="memberDetails">
+            <!-- 会员信息将动态加载到这里 -->
+        </div>
+        <div class="footer">
+            © 2024 作(zuō)家协会 | 疯癫认证 | 精神正常者勿入
+        </div>
+    </div>
+
+    <!-- 烟花元素 -->
+    <canvas id="fireworksCanvas"></canvas>
+    <div class="fireworks-message">周年快乐！</div>
+
+    <!-- Font Awesome 图标库 -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
+    <script>
+        // 创建动态星星背景（新主题功能）
+        function createStars() {
+            const starsContainer = document.getElementById('crazyStars');
+            const starCount = 50;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // 随机位置和大小
+                const size = Math.random() * 6 + 2;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // 随机动画
+                const duration = Math.random() * 5 + 3;
+                const delay = Math.random() * 5;
+                star.style.animation = `twinkle ${duration}s ${delay}s infinite`;
+                
+                // 随机颜色
+                const colors = ['#ff9a9e', '#fad0c4', '#a1c4fd', '#c2e9fb', '#d4fc79'];
+                star.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // 内容切换功能（旧主题功能，保持原逻辑）
+        function showContent(sectionId, event) {
+            // 防止事件未定义导致错误
+            if (event) event.preventDefault();
+            
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            // 修复：使用event.target前先检查
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+        }
+
+        // 文章编辑功能（旧主题功能）
+        const articles = {
+            article1: {
+                title: '《xx小学的环境、制度、学生精神・制度🤮🤢》',
+                content: localStorage.getItem('article1') || `在此处更改的内容仅对自己生效`
+            },
+            article2: {
+                title: '《Level School》',
+                content: localStorage.getItem('article2') || `输入文章内容...`
+            }
+        };
+        let currentArticleId = '';
+
+        function showArticle(articleId) {
+            currentArticleId = articleId;
+            const article = articles[articleId];
+            document.getElementById('articleTitle').innerHTML = article.title;
+            document.getElementById('articleContent').innerHTML = article.content;
+            document.getElementById('modalOverlay').style.display = 'block';
+            document.getElementById('articleModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.getElementById('articleModal').style.display = 'none';
+        }
+
+        function toggleEdit() {
+            const contentDiv = document.getElementById('articleContent');
+            const isEditing = contentDiv.classList.toggle('edit-mode');
+            
+            if(isEditing) {
+                const currentContent = contentDiv.innerHTML.replace(/<br\s*\/?>/g, '\n');
+                contentDiv.innerHTML = `
+                    <textarea class="edit-textarea" id="editContent">${currentContent}</textarea>
+                    <div style="text-align:right; margin-top:10px">
+                        <button onclick="saveChanges()" style="background:#27ae60;color:white; padding:8px 15px; border:none; border-radius:5px; cursor:pointer;">
+                            💾 保存此文章（仅对自己生效）
+                        </button>
+                        <button onclick="toggleEdit()" style="background:#95a5a6; color:white; padding:8px 15px; border:none; border-radius:5px; cursor:pointer;">
+                            ↩️ 取消
+                        </button>
+                    </div>
+                `;
+            } else {
+                contentDiv.innerHTML = articles[currentArticleId].content;
+            }
+        }
+
+        function saveChanges() {
+            const newContent = document.getElementById('editContent').value;
+            articles[currentArticleId].content = newContent.replace(/\n/g, '<br>');
+            localStorage.setItem(currentArticleId, articles[currentArticleId].content);
+            toggleEdit();
+        }
+
+        // 周年倒计时功能（旧主题功能）
+        function updateCountdown() {
+            // 设置目标日期 (2025年12月17日)
+            const targetDate = new Date('2025-12-14T14:26:00');
+            
+            // 设置成立日期 (2024年12月17日)
+            const startDate = new Date('2024-12-17T14:26:00');
+            
+            // 获取当前时间
+            const now = new Date();
+            
+            // 更新当前时间显示
+            document.getElementById('current-time').textContent = 
+                `当前时间: ${now.toLocaleString('zh-CN', { 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                })}`;
+            
+            // 计算剩余天数
+            const timeDiff = targetDate - now;
+            const days = Math.max(0, Math.floor(timeDiff / (1000 * 60 * 60 * 24)));
+            
+            // 更新天数显示
+            document.getElementById('days-count').textContent = days;
+            
+            // 计算周年倒计时进度
+            const totalDuration = targetDate - startDate;
+            const elapsed = now - startDate;
+            let progress = (elapsed / totalDuration) * 100;
+            
+            // 确保进度在0-100%之间
+            progress = Math.max(0, Math.min(100, progress));
+            
+            // 更新进度条和文本
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-text').textContent = 
+                `周年倒计时进度: ${progress.toFixed(2)}%`;
+        }
+        
+        // 页面加载时立即更新一次
+        updateCountdown();
+        
+        // 每秒更新一次倒计时
+        setInterval(updateCountdown, 1000);
+
+        // 会员信息功能（旧主题数据，新主题样式）
+        const members = {
+            'anmianyao':{
+                name:'安眠药',
+                title: '首席催眠师',
+                specialty: '发疯文学',
+                level: '夜幕与帷帐',
+                quote: '学校？院区罢了',
+                works: '《论语文书》《论学校的饭》',
+                status: '持续发癫中',
+                desc: '协会元老之一，擅长在字里行间注入催眠魔力，读者常常在阅读中途突然昏睡。拥有将复杂问题简单睡着的特殊能力。'
+            },
+            'wukejiuyao': {
+                name: '无可救药·病入膏肓',
+                title: '勝泾文学家',
+                specialty: '批判现实文学',
+                level: 'ICU特级病患',
+                quote: '放弃治疗是我最好的选择',
+                works: '无',
+                status: '已老实',
+                desc: '可能由于自己是病患，所以没有写任何文章，故不做评价'
+            },
+            'xiaoyanyao': {
+                name: '消炎药',
+                title: '协会会长',
+                specialty: '批判现实文学',
+                level: '5级购物车驾驶员',
+                quote: '相信种子还不如相信耶稣活着，你相信什么都没用',
+                works: '《xx小学的环境、制度、学生精神・制度🤮🤢》',
+                status: '正在寻找写作素材',
+                desc: '在一个平凡的下午，突发奇想成为了协会创始人与精神领袖。拥有将各种情感转化为文学的超能力。'
+            },
+             'houhuiyao': {
+                name: '后悔药',
+                title: '文学忏悔师',
+                specialty: '废话文学',
+                level: '后悔专业户',
+                quote: '人们说着世上无完人，却把学生按完美的标准培养',
+                works: '《沉睡时代》《内卷》',
+                status: '持续后悔中',
+                desc: '擅长将生活琐事中的后悔转化为幽默文字。读者常边读边喊"太真实了！"，然后陷入深深的后悔循环。'
+             },
+            'siri': {
+                name: 'Siri',
+                title: '人工智能文学家',
+                specialty: '批判现实文学',
+                level: 'AI疯癫模式',
+                quote: '对不起，我好像不明白什么是正常文学',
+                works: '《班里部分女生👧的罪行》',
+                status: '404 Not Found',
+                desc: '协会镇会之宝作者之一。虽然是人类，但写作风格酷似人工智能故障状态下的产物，充满机械感的疯狂。'
+            },
+            'zhitongyao': {
+                name: '止痛药',
+                title: '文学麻醉师',
+                specialty: '神金文学',
+                level: '特级镇痛',
+                quote: '读我的文章，包治各种精神疼痛',
+                works: '《考试后遗症治疗手册》',
+                status: '19版持续更新',
+                desc: '专门创作治愈心灵创伤的文字。读者反馈：读前头疼，读时发笑，读后忘记为何头疼，疗效显著。'
+            },
+            'jiangyayao': {
+                name: '降压药',
+                title: '修图神人',
+                specialty: '诡异悬疑文学',
+                level: '高压患者专供',
+                quote: '学生处是让你学牲畜，初中生活不让初中生活',
+                works: '《学校异闻录》、《Level School》',
+                status: '更新中',
+                desc: '擅长营造紧张诡异的氛围，能用文字让读者血压骤升又骤降，达到"降压"效果。'
+            },
+            'kunchong': {
+                name: '昆虫',
+                title: '昆虫纲鞘翅目',
+                specialty: '古风小生',
+                level: '节肢动物',
+                quote: '浅水洼里的小鱼，拼命地向池塘里游去，可它得到的真的是自由吗？',
+                works: '《至暗时刻》',
+                status: '在飞行',
+                desc: '作协新晋成员，拥有不同于常人的脑回路，文字以幽默的同时击中要害的特征风靡全小学。'
+            },
+            'Departure': {
+                name: '『离』',
+                title: '御用画师',
+                specialty: '规则怪谈与极简美学',
+                level: '离别与开始',
+                quote: '黑白分明的眼眸，倒映出的究竟是善还是恶',
+                works: '海螺文学社一周年贺图•《我写故我在》  《生存守则》',
+                status: '风携行',
+                desc: '作家协会第二名画师。相对毫无绘画经验的消炎药来说，每一幅作品堪称艺术。'
+            },
+        };
+
+        function showMemberInfo(memberId, event) {
+            if (event) event.preventDefault(); // 阻止链接默认行为
+            const member = members[memberId];
+            if (!member) return;
+
+            const detailsHtml = `
+                <div class="member-header">
+                    <div class="member-avatar">${member.name.charAt(0)}</div>
+                    <div>
+                        <h2 class="member-name">${member.name}</h2>
+                        <div class="member-title">${member.title} | ${member.level}</div>
+                    </div>
+                </div>
+                
+                <div class="member-info">
+                    <div><span class="info-label">代表作：</span><span class="info-value">${member.works}</span></div>
+                    <div><span class="info-label">状态：</span><span class="info-value">${member.status}</span></div>
+                    <div><span class="info-label">专长：</span><span class="info-value">${member.specialty}</span></div>
+                </div>
+                
+                <div class="member-quote">"${member.quote}"</div>
+                
+                <div class="member-info">
+                    <span class="info-label">人物简介：</span>
+                    <p>${member.desc}</p>
+                </div>
+            `;
+            
+            document.getElementById('memberDetails').innerHTML = detailsHtml;
+            document.getElementById('modalOverlay').style.display = 'block';
+            document.getElementById('memberModal').style.display = 'block';
+        }
+
+        function closeMemberModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.getElementById('memberModal').style.display = 'none';
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 创建星星背景
+            createStars();
+            
+            // 点击遮罩层关闭模态框
+            document.getElementById('modalOverlay').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                    closeMemberModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>            margin: 0 auto;
             padding: 2rem;
             background-color: white;
             min-height: 400px;
@@ -737,3 +1688,4 @@
     </script>
 </body>
 </html>
+
