@@ -293,88 +293,6 @@
             margin-top: 40px;
             border-radius: 0 0 15px 15px;
         }
-        
-        /* 旧主题特有的样式 */
-        .countdown-card {
-            background: rgba(44, 62, 80, 0.1);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: center;
-            border: 1px solid #3498db;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .countdown-header {
-            font-size: 1.8rem;
-            color: #6a11cb;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .countdown-header i {
-            color: #e74c3c;
-            font-size: 2rem;
-        }
-        
-        .days-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 15px 0;
-        }
-        
-        .days-number {
-            font-size: 3.5rem;
-            font-weight: bold;
-            line-height: 1;
-            margin: 10px 0;
-        }
-        
-        .days-label {
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .target-date {
-            color: #2c3e50;
-            font-size: 1.1rem;
-            margin-top: 10px;
-            font-style: italic;
-        }
-        
-        .progress-container {
-            background: rgba(52, 152, 219, 0.2);
-            height: 12px;
-            border-radius: 6px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #e74c3c, #f1c40f);
-            border-radius: 6px;
-            width: 0;
-            transition: width 1s ease;
-        }
-        
-        .progress-label {
-            color: #2c3e50;
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-        
-        .current-time {
-            color: #7f8c8d;
-            font-size: 0.9rem;
-            margin-top: 15px;
-        }
-
         .anniversary-notice {
             background: linear-gradient(135deg, #6a11cc, #2575fc);
             color: white;
@@ -536,25 +454,6 @@
                 <li>寻找类人用作写作素材</li>
                 <li>消耗糯米</li>
             </ul>
-            
-            <!-- 修复点1：补全缺失的倒计时DOM元素 -->
-            <h2>周年倒计时</h2>
-            <div class="countdown-card">
-                <div class="countdown-header">
-                    <i class="fas fa-calendar-day"></i>
-                    <span>距离二周年还有</span>
-                </div>
-                <div class="days-container">
-                    <div class="days-number" id="days-count">0</div>
-                    <div class="days-label">天</div>
-                </div>
-                <div class="target-date">目标日期：2025年12月14日 14:26</div>
-                <div class="progress-container">
-                    <div class="progress-bar" id="progress-bar"></div>
-                </div>
-                <div class="progress-label" id="progress-text">周年倒计时进度: 0.00%</div>
-                <div class="current-time" id="current-time">当前时间: --</div>
-            </div>
             
             <h2>本疗程话题：如何在开学前补完积压的作业？</h2>
             
@@ -783,65 +682,7 @@
             localStorage.setItem(currentArticleId, articles[currentArticleId].content);
             toggleEdit();
         }
-
-        // 周年倒计时功能（旧主题功能）
-        function updateCountdown() {
-            // 修复点3：增加DOM元素存在性检查，避免报错中断脚本
-            const daysCountEl = document.getElementById('days-count');
-            const currentTimeEl = document.getElementById('current-time');
-            const progressBarEl = document.getElementById('progress-bar');
-            const progressTextEl = document.getElementById('progress-text');
-            
-            // 如果元素不存在，直接返回，不执行后续逻辑
-            if (!daysCountEl || !currentTimeEl || !progressBarEl || !progressTextEl) return;
-            
-            // 设置目标日期 (2025年12月17日)
-            const targetDate = new Date('2025-12-14T14:26:00');
-            
-            // 设置成立日期 (2024年12月17日)
-            const startDate = new Date('2024-12-17T14:26:00');
-            
-            // 获取当前时间
-            const now = new Date();
-            
-            // 更新当前时间显示
-            currentTimeEl.textContent = 
-                `当前时间: ${now.toLocaleString('zh-CN', { 
-                    year: 'numeric', 
-                    month: '2-digit', 
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                })}`;
-            
-            // 计算剩余天数
-            const timeDiff = targetDate - now;
-            const days = Math.max(0, Math.floor(timeDiff / (1000 * 60 * 60 * 24)));
-            
-            // 更新天数显示
-            daysCountEl.textContent = days;
-            
-            // 计算周年倒计时进度
-            const totalDuration = targetDate - startDate;
-            const elapsed = now - startDate;
-            let progress = (elapsed / totalDuration) * 100;
-            
-            // 确保进度在0-100%之间
-            progress = Math.max(0, Math.min(100, progress));
-            
-            // 更新进度条和文本
-            progressBarEl.style.width = `${progress}%`;
-            progressTextEl.textContent = 
-                `周年倒计时进度: ${progress.toFixed(2)}%`;
-        }
         
-        // 页面加载时立即更新一次
-        updateCountdown();
-        
-        // 每秒更新一次倒计时
-        setInterval(updateCountdown, 1000);
-
         // 会员信息功能（旧主题数据，新主题样式）
         const members = {
             'anmianyao':{
@@ -1000,3 +841,4 @@
     </script>
 </body>
 </html>
+
