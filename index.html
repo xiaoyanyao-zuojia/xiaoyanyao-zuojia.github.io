@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>zuō家协会</title>
     <style>
+        /* 原有样式保持不变，此处省略（因篇幅限制），实际使用时保留所有样式 */
         /* 新主题的基础样式 */
         body {
             font-family: '微软雅黑', sans-serif;
@@ -536,7 +537,24 @@
                 <li>消耗糯米</li>
             </ul>
             
-            <!-- 周年倒计时（旧主题功能） -->
+            <!-- 修复点1：补全缺失的倒计时DOM元素 -->
+            <h2>周年倒计时</h2>
+            <div class="countdown-card">
+                <div class="countdown-header">
+                    <i class="fas fa-calendar-day"></i>
+                    <span>距离二周年还有</span>
+                </div>
+                <div class="days-container">
+                    <div class="days-number" id="days-count">0</div>
+                    <div class="days-label">天</div>
+                </div>
+                <div class="target-date">目标日期：2025年12月14日 14:26</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="progress-label" id="progress-text">周年倒计时进度: 0.00%</div>
+                <div class="current-time" id="current-time">当前时间: --</div>
+            </div>
             
             <h2>本疗程话题：如何在开学前补完积压的作业？</h2>
             
@@ -545,8 +563,9 @@
                 <h3 style="margin-top: 0;">烟花观赏区</h3>
                 <p>点击下方按钮进入独立烟花燃放站，随时随地庆祝！</p>
                 <a href="fireworks.html">🚀 空降烟花燃放区</a>
+                <!-- 修复点2：闭合未结束的p标签 -->
                 <p style="font-size: 12px; margin-top: 10px; color: rgba(255,255,255,0.8);">
-                    (新窗口打开，可随时返回主站
+                    (新窗口打开，可随时返回主站)
                 </p>
             </div>
         </div>
@@ -767,6 +786,15 @@
 
         // 周年倒计时功能（旧主题功能）
         function updateCountdown() {
+            // 修复点3：增加DOM元素存在性检查，避免报错中断脚本
+            const daysCountEl = document.getElementById('days-count');
+            const currentTimeEl = document.getElementById('current-time');
+            const progressBarEl = document.getElementById('progress-bar');
+            const progressTextEl = document.getElementById('progress-text');
+            
+            // 如果元素不存在，直接返回，不执行后续逻辑
+            if (!daysCountEl || !currentTimeEl || !progressBarEl || !progressTextEl) return;
+            
             // 设置目标日期 (2025年12月17日)
             const targetDate = new Date('2025-12-14T14:26:00');
             
@@ -777,7 +805,7 @@
             const now = new Date();
             
             // 更新当前时间显示
-            document.getElementById('current-time').textContent = 
+            currentTimeEl.textContent = 
                 `当前时间: ${now.toLocaleString('zh-CN', { 
                     year: 'numeric', 
                     month: '2-digit', 
@@ -792,7 +820,7 @@
             const days = Math.max(0, Math.floor(timeDiff / (1000 * 60 * 60 * 24)));
             
             // 更新天数显示
-            document.getElementById('days-count').textContent = days;
+            daysCountEl.textContent = days;
             
             // 计算周年倒计时进度
             const totalDuration = targetDate - startDate;
@@ -803,8 +831,8 @@
             progress = Math.max(0, Math.min(100, progress));
             
             // 更新进度条和文本
-            document.getElementById('progress-bar').style.width = `${progress}%`;
-            document.getElementById('progress-text').textContent = 
+            progressBarEl.style.width = `${progress}%`;
+            progressTextEl.textContent = 
                 `周年倒计时进度: ${progress.toFixed(2)}%`;
         }
         
@@ -972,4 +1000,3 @@
     </script>
 </body>
 </html>
-
