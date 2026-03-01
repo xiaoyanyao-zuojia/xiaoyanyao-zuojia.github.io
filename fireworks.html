@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>作协烟花观赏区</title>
+    <title>烟花观赏区</title>
     <style>
         body {
             margin: 0;
@@ -101,18 +101,18 @@
 </head>
 <body>
     <div class="control-panel">
-        <div class="title">🎆 作协烟花观赏区</div>
+        <div class="title">🎆 烟花观赏区</div>
         <div class="subtitle">点击下方按钮开始放烟花</div>
         <div class="buttons">
-            <button onclick="startFireworks()">🎇 发射烟花</button>
-            <button onclick="stopFireworks()">⏹️ 停止烟花</button>
-            <button onclick="location.href='index.html'" class="back-btn">🏠 返回主站</button>
+            <button onclick="startFireworks()">发射烟花</button>
+            <button onclick="stopFireworks()">停止烟花</button>
+            <button onclick="location.href='index.html'" class="back-btn">🏠返回主站</button>
         </div>
     </div>
     
     <canvas id="fireworksCanvas"></canvas>
     <div class="fireworks-message" id="fireworksMessage">
-        🎉 作协一周年快乐！ 🎉
+        🎉 热烈庆贺作协网站诞生一周年！ 🎉
     </div>
     
     <script>
@@ -249,7 +249,7 @@ function animate() {
     animationId = requestAnimationFrame(animate);
 }
 
-function showMessage(text = "🎉 作协一周年快乐！ 🎉") {
+function showMessage(text = "🎉 热烈庆贺作协网站诞生一周年！ 🎉") {
     if (messageElement) {
         messageElement.innerHTML = text;
         messageElement.style.display = 'block';
@@ -266,7 +266,7 @@ function startFireworks() {
     animate();
     showMessage();
     
-    console.log('🎆 烟花已开始发射！');
+    console.log('烟花已开始发射');
 }
 
 function stopFireworks() {
@@ -279,7 +279,7 @@ function stopFireworks() {
     fireworksCtx.fillStyle = 'rgba(0, 0, 0, 1)';
     fireworksCtx.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
     
-    console.log('⏹️ 烟花已停止');
+    console.log('烟花已停止');
 }
 
 // 页面初始化
