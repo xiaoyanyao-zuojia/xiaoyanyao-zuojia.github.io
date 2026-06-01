@@ -5,12 +5,11 @@
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon.ico.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>zuō家协会</title>
     <style>
-        /* 原有样式保持不变，此处省略（因篇幅限制），实际使用时保留所有样式 */
-        /* 新主题的基础样式 */
         body {
             font-family: '微软雅黑', sans-serif;
             line-height: 1.6;
@@ -375,7 +374,6 @@
             display: block;
         }
 
-        /* 新主题的星星背景 */
         .crazy-stars {
             position: absolute;
             width: 100%;
@@ -433,9 +431,9 @@
     <div class="crazy-stars" id="crazyStars"></div>
     
     <nav>
-        <a href="#" onclick="showContent('home', event)" class="active">首页</a>
-        <a href="#" onclick="showContent('about', event)">关于我们</a>
-        <a href="#" onclick="showContent('articles', event)">文章和其他</a>
+    <a href="#" onclick="showContent('home')" class="active"><i class="fas fa-home"></i> 首页</a>
+    <a href="#" onclick="showContent('about')"><i class="fas fa-users"></i> 关于我们</a>
+    <a href="#" onclick="showContent('articles')"><i class="fas fa-book"></i> 文章和其他</a>
     </nav>
 
     <div class="container">
@@ -459,7 +457,7 @@
             <div class="fireworks-link">
                 <h3 style="margin-top: 0;">烟花观赏区</h3>
                 <p>点击下方按钮进入独立烟花燃放站，随时随地庆祝！</p>
-                <a href="fireworks.html">🚀 空降烟花燃放区</a>
+                <a href="fireworks.html">🚀 进入烟花燃放区</a>
                 <p style="font-size: 12px; margin-top: 10px; color: rgba(255,255,255,0.8);">
                     (新窗口打开，可随时返回主站)
                 </p>
@@ -492,19 +490,19 @@
             </ul>
             <h2>加入我们</h2>
             <p>微信搜索“海螺文学社”获取更多信息，社长会第一时间赶来回复你</p>
-            <p>文章写作限制:禁止违反法律,损害他人合法权益内容出现（总之就是法律禁止的一律不做）</p>
+            <p>文章写作限制:禁止违反法律,损害他人合法权益内容，禁止攻击其余成员，禁止煽动同事间对立情绪</p>
         </div>
 
         <!-- 文章内容（保持旧主题的所有内容） -->
         <div id="articles" class="content-section">
             <h1>📚 作品和其他</h1>
             <div class="subsection">
-                <h2>海螺文学社的部分作品</h2>
+                <h2>海螺文学社作品（部分）</h2>
                 <div class="article-list">
                     <div class="article-item">
                         <h3>写字板</h3>
                         <p><br></p>
-                        <button class="read-button" onclick="showArticle('article1')">🚀 阅读和编辑</button>
+                        <button class="read-button" onclick="showArticle('article1')">🚀 查看和编辑</button>
                     </div>
                     <div class="article-item">
                         <h3>《作家协会•兴盛与选择》</h3>
@@ -529,12 +527,12 @@
                     <div class="article-item">
                         <h3>《内卷•作协往事》</h3>
                         <p>作者：后悔药|字数：2185|状态：暂停更新<br>中式··题材的小说，用最锋利的文笔描写最痛苦的处境，X市的学生们该何去何从？</p>
+                   </div>
                     <div class="article-item">
                         <h3>《浅析环境湿度对皮筋使用寿命的影响》</h3>
                         <p>作者：消炎药|字数：7082|状态：更新中<br>一个成绩中等的初一男生，因帮同学带作业而卷入一场无人察觉的情感风暴——周测、听写、社长身份、生日、一张成绩纸条、一条手链，每一件小事都像一次极细微的拉扯，而那根“好好的”皮筋，早已在日复一日的“还行”“没事”中，绷到了肉眼看不见的长度。</p>
                     </div>
                 </div>
-            </div>
 
             <div class="subsection">
                 <h2>其他内容</h2>
@@ -715,7 +713,7 @@
                 level: '5级购物车驾驶员',
                 quote: '相信种子还不如相信耶稣活着，你相信什么都没用',
                 works: '《xx小学的环境、制度、学生精神・制度🤮🤢》《浅析环境湿度对皮筋使用寿命的影响》',
-                status: '正在寻找写作素材',
+                status: '正在观赏小香松',
                 desc: '在一个平凡的下午，突发奇想成为了协会创始人与精神领袖。拥有将各种情感转化为文学的超能力。一名完美主义者，或许有心理问题'
             },
              'houhuiyao': {
